@@ -10,6 +10,10 @@ alias lg='lazygit'
 alias cat='bat'
 alias ll='ls -alh'
 
+function todoo
+    todo q "$argv #Inbox"
+end
+
 zoxide init fish | source
 
 # potentially disabling fastfetch
