@@ -9,6 +9,7 @@ alias n='nvim'
 alias lg='lazygit'
 alias cat='bat'
 alias ll='ls -alh'
+alias lowfi="lowfi -t chillhop"
 
 function todoo
     todo q "$argv #Inbox"
