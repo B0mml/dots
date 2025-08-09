@@ -51,10 +51,13 @@ stow -D nvim
 ```
 
 ## Additional Requirements
+
 <https://github.com/illiteratewriter/todoist-rs>
 <https://github.com/sachaos/todoist>
 <https://atuin.sh/>
 <https://github.com/MordechaiHadad/bob>
+<https://github.com/talwat/lowfi>
+<https://github.com/charmbracelet/gum>
 
 ## Notes
 

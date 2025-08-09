@@ -24,9 +24,12 @@ return {
     workspaces = {
       {
         name = 'Vault',
-        path = '~/obsidian/Vault/',
+        path = '~/notes/obsidian/myVault/Vault/',
       },
     },
+
+    -- Disable legacy commands to avoid deprecation warnings
+    legacy_commands = false,
 
     -- Configure note ID generation to use title
     note_id_func = function(title)
@@ -84,63 +87,47 @@ return {
       blink = true,
       min_chars = 2,
     },
-
-    -- Use tab for folding in markdown files
-    mappings = {
-      -- Enable tab for fold toggle
-      ['<tab>'] = {
-        action = function()
-          if vim.fn.foldlevel '.' > 0 then
-            if vim.fn.foldclosed '.' == -1 then
-              vim.cmd 'foldclose'
-            else
-              vim.cmd 'foldopen'
-            end
-          end
-        end,
-        opts = { buffer = true },
-      },
-    },
   },
   config = function(_, opts)
     require('obsidian').setup(opts)
 
     local function map(mode, lhs, rhs, desc) vim.keymap.set(mode, lhs, rhs, { desc = desc, silent = true }) end
-    -- Core note operations
-    map('n', '<leader>on', '<cmd>ObsidianNew<cr>', 'New note')
-    map('n', '<leader>oN', '<cmd>ObsidianNewFromTemplate<cr>', 'New note from template')
-    map('n', '<leader>oo', '<cmd>ObsidianOpen<cr>', 'Open note')
-    map('n', '<leader>oq', '<cmd>ObsidianQuickSwitch<cr>', 'Quick switch notes')
+
+    -- Core note operations (using new command format)
+    map('n', '<leader>on', '<cmd>Obsidian new<cr>', 'New note')
+    map('n', '<leader>oN', '<cmd>Obsidian new from template<cr>', 'New note from template')
+    map('n', '<leader>oo', '<cmd>Obsidian open<cr>', 'Open note')
+    map('n', '<leader>oq', '<cmd>Obsidian quick switch<cr>', 'Quick switch notes')
 
     -- Search and find
-    map('n', '<leader>of', '<cmd>ObsidianSearch<cr>', 'Search notes')
-    map('n', '<leader>ob', '<cmd>ObsidianBacklinks<cr>', 'Show backlinks')
-    map('n', '<leader>ol', '<cmd>ObsidianLinks<cr>', 'Show all links')
-    map('n', '<leader>ot', '<cmd>ObsidianTags<cr>', 'Browse tags')
+    map('n', '<leader>of', '<cmd>Obsidian search<cr>', 'Search notes')
+    map('n', '<leader>ob', '<cmd>Obsidian backlinks<cr>', 'Show backlinks')
+    map('n', '<leader>ol', '<cmd>Obsidian links<cr>', 'Show all links')
+    map('n', '<leader>ot', '<cmd>Obsidian tags<cr>', 'Browse tags')
 
     -- Daily notes
-    map('n', '<leader>od', '<cmd>ObsidianToday<cr>', "Today's note")
-    map('n', '<leader>oy', '<cmd>ObsidianYesterday<cr>', "Yesterday's note")
-    map('n', '<leader>om', '<cmd>ObsidianTomorrow<cr>', "Tomorrow's note")
-    map('n', '<leader>oD', '<cmd>ObsidianDailies<cr>', 'Browse daily notes')
+    map('n', '<leader>od', '<cmd>Obsidian today<cr>', "Today's note")
+    map('n', '<leader>oy', '<cmd>Obsidian yesterday<cr>', "Yesterday's note")
+    map('n', '<leader>om', '<cmd>Obsidian tomorrow<cr>', "Tomorrow's note")
+    map('n', '<leader>oD', '<cmd>Obsidian dailies<cr>', 'Browse daily notes')
 
     -- Link operations
-    map('n', '<leader>oL', '<cmd>ObsidianLink<cr>', 'Create link from selection')
-    map('v', '<leader>oL', '<cmd>ObsidianLink<cr>', 'Create link from selection')
-    map('n', '<leader>oF', '<cmd>ObsidianLinkNew<cr>', 'Create new note and link')
-    map('v', '<leader>oF', '<cmd>ObsidianLinkNew<cr>', 'Create new note and link')
-    map('n', '<leader>og', '<cmd>ObsidianFollowLink<cr>', 'Follow link under cursor')
+    map('n', '<leader>oL', '<cmd>Obsidian link<cr>', 'Create link from selection')
+    map('v', '<leader>oL', '<cmd>Obsidian link<cr>', 'Create link from selection')
+    map('n', '<leader>oF', '<cmd>Obsidian link new<cr>', 'Create new note and link')
+    map('v', '<leader>oF', '<cmd>Obsidian link new<cr>', 'Create new note and link')
+    map('n', '<leader>og', '<cmd>Obsidian follow<cr>', 'Follow link under cursor')
 
     -- Templates and workspace
-    map('n', '<leader>oT', '<cmd>ObsidianTemplate<cr>', 'Insert template')
-    map('n', '<leader>ow', '<cmd>ObsidianWorkspace<cr>', 'Switch workspace')
+    map('n', '<leader>oT', '<cmd>Obsidian template<cr>', 'Insert template')
+    map('n', '<leader>ow', '<cmd>Obsidian workspace<cr>', 'Switch workspace')
 
     -- Utility
-    map('n', '<leader>or', '<cmd>ObsidianRename<cr>', 'Rename note')
-    map('n', '<leader>ox', '<cmd>ObsidianExtractNote<cr>', 'Extract note from selection')
-    map('v', '<leader>ox', '<cmd>ObsidianExtractNote<cr>', 'Extract note from selection')
-    map('n', '<leader>op', '<cmd>ObsidianPasteImg<cr>', 'Paste image')
-    map('n', '<leader>oc', '<cmd>ObsidianToggleCheckbox<cr>', 'Toggle checkbox')
+    map('n', '<leader>or', '<cmd>Obsidian rename<cr>', 'Rename note')
+    map('n', '<leader>ox', '<cmd>Obsidian extract<cr>', 'Extract note from selection')
+    map('v', '<leader>ox', '<cmd>Obsidian extract<cr>', 'Extract note from selection')
+    map('n', '<leader>op', '<cmd>Obsidian paste img<cr>', 'Paste image')
+    map('n', '<leader>oc', '<cmd>Obsidian toggle checkbox<cr>', 'Toggle checkbox')
 
     -- Advanced API shortcuts (using Lua functions)
     map('n', '<leader>oS', function()
@@ -171,5 +158,21 @@ return {
         vim.notify(info, vim.log.levels.INFO)
       end
     end, 'Show note info')
+
+    -- Custom keymap for tab folding in markdown (replaces deprecated mappings config)
+    vim.api.nvim_create_autocmd('FileType', {
+      pattern = 'markdown',
+      callback = function()
+        vim.keymap.set('n', '<tab>', function()
+          if vim.fn.foldlevel '.' > 0 then
+            if vim.fn.foldclosed '.' == -1 then
+              vim.cmd 'foldclose'
+            else
+              vim.cmd 'foldopen'
+            end
+          end
+        end, { buffer = true, desc = 'Toggle fold' })
+      end,
+    })
   end,
 }
