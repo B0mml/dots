@@ -59,6 +59,7 @@ stow -D nvim
 <https://github.com/talwat/lowfi>
 <https://github.com/charmbracelet/gum>
 <https://github.com/tealdeer-rs/tealdeer>
+<https://github.com/joshmedeski/sesh>
 
 ## Notes
 
