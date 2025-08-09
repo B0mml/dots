@@ -71,7 +71,7 @@ return {
       end
 
       -- Map to <leader>un
-      vim.keymap.set('n', '<leader>un', toggle_no_neck_pain, {
+      vim.keymap.set('n', '<leader>uN', toggle_no_neck_pain, {
         desc = 'Toggle No Neck Pain',
       })
     end,

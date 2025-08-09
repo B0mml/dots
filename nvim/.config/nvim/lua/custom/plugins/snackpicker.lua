@@ -11,6 +11,7 @@ return {
     scope = { enabled = true },
     statuscolumn = { enabled = true },
     words = { enabled = true },
+    notifier = { enabled = true },
     styles = {
       notification = {
         -- wo = { wrap = true } -- Wrap notifications
@@ -292,11 +293,13 @@ return {
       function() Snacks.zen.zoom() end,
       desc = 'Toggle Zoom',
     },
+    { '<leader>un', function() Snacks.notifier.hide() end, desc = 'Dismiss All Notifications' },
     {
       '<leader>..',
       function() Snacks.scratch() end,
       desc = 'Toggle Scratch Buffer',
     },
+    { '<leader>n', function() Snacks.notifier.show_history() end, desc = 'Notification History' },
     {
       '<leader>.S',
       function() Snacks.scratch.select() end,
