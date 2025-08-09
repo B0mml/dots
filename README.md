@@ -29,6 +29,7 @@ git clone https://github.com/yourusername/dotfiles.git ~/Dotfiles
 cd ~/Dotfiles
 
 # Install all configurations
+rm -drf .git
 stow */
 
 # Or install individual programs eg.
