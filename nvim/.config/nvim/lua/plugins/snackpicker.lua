@@ -1,17 +1,6 @@
 return {
   'folke/snacks.nvim',
-  priority = 1000,
-  lazy = false,
-  ---@type snacks.Config
   opts = {
-    bigfile = { enabled = true },
-    explorer = { enabled = true },
-    picker = { enabled = true },
-    quickfile = { enabled = true },
-    scope = { enabled = true },
-    statuscolumn = { enabled = true },
-    words = { enabled = true },
-    notifier = { enabled = true },
     styles = {
       notification = {
         -- wo = { wrap = true } -- Wrap notifications
@@ -404,30 +393,6 @@ return {
         Snacks.toggle.inlay_hints():map '<leader>uh'
         Snacks.toggle.indent():map '<leader>ug'
         Snacks.toggle.dim():map '<leader>uD'
-        Snacks.toggle({
-          name = 'Copilot',
-          get = function() return vim.g.copilot_enabled ~= 0 end,
-          set = function(state)
-            vim.g.copilot_enabled = state and 1 or 0
-            if state then
-              vim.cmd 'Copilot enable'
-            else
-              vim.cmd 'Copilot disable'
-            end
-          end,
-        }):map '<leader>ap'
-        -- Alternative if is_enabled() doesn't exist
-        -- Snacks.toggle({
-        --   name = 'Hardtime',
-        --   get = function()
-        --     -- Default to false since plugin starts disabled
-        --     return vim.g.hardtime_enabled == true
-        --   end,
-        --   set = function(state)
-        --     vim.cmd 'Hardtime toggle'
-        --     vim.g.hardtime_enabled = state
-        --   end,
-        -- }):map '<leader>uH'
       end,
     })
   end,

@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-VAULT_DIR="$HOME/obsidian/Vault"
+VAULT_DIR="$HOME/notes/obsidian/myVault/Vault"
 
 # Check if vault directory exists
 if [[ ! -d $VAULT_DIR ]]; then
