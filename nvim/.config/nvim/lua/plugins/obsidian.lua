@@ -24,7 +24,7 @@ return {
     workspaces = {
       {
         name = 'Vault',
-        path = '~/notes/obsidian/myVault/Vault/',
+        path = '~/obsidian/Vault/',
       },
     },
 
@@ -93,11 +93,11 @@ return {
 
     local function map(mode, lhs, rhs, desc) vim.keymap.set(mode, lhs, rhs, { desc = desc, silent = true }) end
 
-    -- Core note operations (using new command format)
+    -- Core note operations (using correct command format with underscores)
     map('n', '<leader>on', '<cmd>Obsidian new<cr>', 'New note')
-    map('n', '<leader>oN', '<cmd>Obsidian new from template<cr>', 'New note from template')
+    map('n', '<leader>oN', '<cmd>Obsidian new_from_template<cr>', 'New note from template')
     map('n', '<leader>oo', '<cmd>Obsidian open<cr>', 'Open note')
-    map('n', '<leader>oq', '<cmd>Obsidian quick switch<cr>', 'Quick switch notes')
+    map('n', '<leader>oq', '<cmd>Obsidian quick_switch<cr>', 'Quick switch notes')
 
     -- Search and find
     map('n', '<leader>of', '<cmd>Obsidian search<cr>', 'Search notes')
@@ -114,9 +114,9 @@ return {
     -- Link operations
     map('n', '<leader>oL', '<cmd>Obsidian link<cr>', 'Create link from selection')
     map('v', '<leader>oL', '<cmd>Obsidian link<cr>', 'Create link from selection')
-    map('n', '<leader>oF', '<cmd>Obsidian link new<cr>', 'Create new note and link')
-    map('v', '<leader>oF', '<cmd>Obsidian link new<cr>', 'Create new note and link')
-    map('n', '<leader>og', '<cmd>Obsidian follow<cr>', 'Follow link under cursor')
+    map('n', '<leader>oF', '<cmd>Obsidian link_new<cr>', 'Create new note and link')
+    map('v', '<leader>oF', '<cmd>Obsidian link_new<cr>', 'Create new note and link')
+    map('n', '<leader>og', '<cmd>Obsidian follow_link<cr>', 'Follow link under cursor')
 
     -- Templates and workspace
     map('n', '<leader>oT', '<cmd>Obsidian template<cr>', 'Insert template')
@@ -124,10 +124,10 @@ return {
 
     -- Utility
     map('n', '<leader>or', '<cmd>Obsidian rename<cr>', 'Rename note')
-    map('n', '<leader>ox', '<cmd>Obsidian extract<cr>', 'Extract note from selection')
-    map('v', '<leader>ox', '<cmd>Obsidian extract<cr>', 'Extract note from selection')
-    map('n', '<leader>op', '<cmd>Obsidian paste img<cr>', 'Paste image')
-    map('n', '<leader>oc', '<cmd>Obsidian toggle checkbox<cr>', 'Toggle checkbox')
+    map('n', '<leader>ox', '<cmd>Obsidian extract_note<cr>', 'Extract note from selection')
+    map('v', '<leader>ox', '<cmd>Obsidian extract_note<cr>', 'Extract note from selection')
+    map('n', '<leader>op', '<cmd>Obsidian paste_img<cr>', 'Paste image')
+    map('n', '<leader>oc', '<cmd>Obsidian toggle_checkbox<cr>', 'Toggle checkbox')
 
     -- Advanced API shortcuts (using Lua functions)
     map('n', '<leader>oS', function()
