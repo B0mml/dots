@@ -28,7 +28,7 @@ function M.setup()
   vim.o.showmode = false
 
   -- Sync clipboard between OS and Neovim
-  vim.schedule(function() vim.o.clipboard = 'unnamedplus' end)
+  vim.o.clipboard = 'unnamedplus'
 
   -- Text editing
   vim.o.breakindent = true
