@@ -22,6 +22,7 @@ alias lg='lazygit'
 alias cat='bat'
 alias ll='ls -alh'
 alias lowfi="lowfi -t chillhop"
+alias claude="~/.claude/local/claude"
 
 function todoo
     todo q "$argv #Inbox"
@@ -79,3 +80,4 @@ end
 enable_transience
 
 thefuck --alias | source
+
