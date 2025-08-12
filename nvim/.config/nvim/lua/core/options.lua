@@ -52,6 +52,9 @@ function M.setup()
 
   -- Preview substitutions live
   vim.o.inccommand = 'split'
+
+  -- Disable swapfile
+  vim.opt.swapfile = false
 end
 
 return M
