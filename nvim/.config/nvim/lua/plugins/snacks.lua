@@ -11,7 +11,16 @@ return {
     input = { enabled = true },
     lazygit = { enabled = true },
     notifier = { enabled = true },
-    picker = { enabled = true },
+    picker = {
+      enabled = true,
+      exclude = {
+        '.git',
+        '.godot', -- Godot Cache Ordner
+        '*.tscn', -- Versteckt Szenen
+        '*.uid', -- Versteckt UID Files
+        '*.import', -- Versteckt Import Files
+      },
+    },
     quickfile = { enabled = true },
     scope = { enabled = true },
     scroll = { enabled = false },

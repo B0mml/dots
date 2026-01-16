@@ -17,9 +17,8 @@ function M.setup()
 
     vim.cmd.colorscheme 'tokyonight-storm'
   else
-    vim.cmd.colorscheme 'nordic'
+    vim.cmd.colorscheme 'teide-dark'
   end
 end
 
 return M
-
