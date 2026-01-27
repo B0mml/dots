@@ -81,3 +81,6 @@ enable_transience
 
 thefuck --alias | source
 
+
+# opencode
+fish_add_path /home/lucas/.opencode/bin
