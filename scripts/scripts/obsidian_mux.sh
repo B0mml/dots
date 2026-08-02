@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-VAULT_DIR="$HOME/notes/obsidian/myVault/Vault"
+VAULT_DIR="$HOME/obsidian/Vault/"
 
 # Check for window flag
 USE_WINDOW=false

@@ -1,7 +1,7 @@
 # source /usr/share/cachyos-fish-config/cachyos-config.fish
 source ~/.config/fish/default-config.fish
 
-if not set -q TMUX; and not tmux has-session -t default 2>/dev/null
+if status is-interactive; and not set -q TMUX; and not tmux has-session -t default 2>/dev/null
     tmux -2u new -s default
 end
 
@@ -29,6 +29,10 @@ function todoo
 end
 
 function ex
+    if test (count $argv) -eq 0
+        echo "Usage: ex <archive_file>"
+        return 1
+    end
     if test -f $argv[1]
         switch $argv[1]
             case "*.tar.bz2"
@@ -81,3 +85,9 @@ enable_transience
 
 thefuck --alias | source
 
+
+
+# Added by Antigravity CLI installer
+fish_add_path ~/.local/bin
+
+true
