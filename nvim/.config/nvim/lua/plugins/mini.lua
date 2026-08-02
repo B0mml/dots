@@ -50,7 +50,7 @@ return {
       }
 
       -- File explorer toggle
-      vim.keymap.set('n', '-', function()
+      vim.keymap.set('n', '=', function()
         if not require('mini.files').close() then require('mini.files').open() end
       end, { desc = 'Open File Explorer' })
 

@@ -86,8 +86,13 @@ enable_transience
 thefuck --alias | source
 
 
+<<<<<<< HEAD
 
 # Added by Antigravity CLI installer
 fish_add_path ~/.local/bin
 
 true
+=======
+# opencode
+fish_add_path /home/lucas/.opencode/bin
+>>>>>>> 70caed4428adccd3612927985b10f589be4e14e3
