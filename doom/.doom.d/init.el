@@ -73,6 +73,9 @@
        ;;eww               ; the internet is gross
        (ibuffer +icons)           ; interactive buffer management
        undo              ; persistent, smarter undo for your inevitable mistakes
+
+
+
        vc                ; version-control and Emacs, sitting in a tree
 
        :term

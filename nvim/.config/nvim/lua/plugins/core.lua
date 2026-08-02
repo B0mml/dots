@@ -112,7 +112,6 @@ return {
         { '<leader>.', group = 'Scratch Buffer' },
         { '<leader>b', group = 'buffer', icon = { icon = '' } },
         { '<leader>p', group = 'Projects', icon = { icon = '󰉌' } },
-        { '<leader>o', group = 'Obsidian' },
       },
     },
   },
