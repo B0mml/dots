@@ -1,8 +1,4 @@
-<<<<<<< HEAD
 # This file was created by fish when upgrading to version >= 4.3, to migrate
-=======
-# This file was created by fish when upgrading to version 4.3, to migrate
->>>>>>> 70caed4428adccd3612927985b10f589be4e14e3
 # the 'fish_key_bindings' variable from its old default scope (universal)
 # to its new default scope (global).  We recommend you delete this file
 # and configure key bindings in ~/.config/fish/config.fish if needed.
