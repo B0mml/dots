@@ -3,6 +3,10 @@ return {
   {
     'echasnovski/mini.nvim',
     config = function()
+      -- Mini icons
+      require('mini.icons').setup()
+      require('mini.icons').mock_nvim_web_devicons()
+
       -- Mini AI
       require('mini.ai').setup { n_lines = 500 }
 

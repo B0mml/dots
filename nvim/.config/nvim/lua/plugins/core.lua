@@ -53,9 +53,9 @@ return {
         map('n', '<leader>hb', gitsigns.blame_line, { desc = 'git blame line' })
         map('n', '<leader>hd', gitsigns.diffthis, { desc = 'git diff against index' })
         map('n', '<leader>hD', function() gitsigns.diffthis '@' end, { desc = 'git Diff against last commit' })
-        -- Toggles
-        map('n', '<leader>tb', gitsigns.toggle_current_line_blame, { desc = 'Toggle git show blame line' })
-        map('n', '<leader>tD', gitsigns.preview_hunk_inline, { desc = 'Toggle git show Deleted' })
+        -- Toggles under User Interface
+        map('n', '<leader>uB', gitsigns.toggle_current_line_blame, { desc = 'Toggle git show blame line' })
+        map('n', '<leader>uD', gitsigns.preview_hunk_inline, { desc = 'Toggle git show Deleted' })
       end,
     },
   },
