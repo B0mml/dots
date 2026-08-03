@@ -10,7 +10,7 @@ return {
       -- Mini AI
       require('mini.ai').setup { n_lines = 500 }
 
-      -- Mini surround with custom mappings
+      -- Mini surround
       require('mini.surround').setup {
         mappings = {
           add = 'ma',

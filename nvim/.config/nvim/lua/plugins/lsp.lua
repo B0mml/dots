@@ -128,6 +128,15 @@ return {
       require('mason-lspconfig').setup {
         automatic_enable = vim.tbl_keys(servers),
       }
+
+      -- GDScript LSP setup
+      local gd_port = os.getenv 'GDScript_Port' or '6005'
+      vim.lsp.config('gdscript', {
+        cmd = vim.lsp.rpc.connect('127.0.0.1', tonumber(gd_port)),
+        filetypes = { 'gd', 'gdscript', 'gdscript3' },
+        root_markers = { 'project.godot', '.git' },
+      })
+      vim.lsp.enable 'gdscript'
     end,
   },
 }
