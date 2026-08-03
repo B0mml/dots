@@ -1,67 +1,48 @@
 # Yet Another Dotfile Repo
 
-OS: CachyOS
+OS: CachyOS / Arch Linux
 
 ## Programs
 
 - Terminal: ghostty
 - Shell: fish
-- Editor: Neovim
+- Editor: Neovim / Doom Emacs
+- Desktop: KDE Plasma (Catppuccin theme)
 
-## Installation
+## Quick New Laptop Restore Guide
 
-### Prerequisites
-
+### 1. Reinstall Packages
 ```bash
-# Install GNU Stow
-sudo pacman -S stow  # Arch/CachyOS
+# Official packages
+sudo pacman -S --needed - < pkglist-native.txt
 
-sudo apt install stow  # Ubuntu/Debian
-
-brew install stow  # macOS
+# AUR packages (using paru or yay)
+paru -S --needed - < pkglist-aur.txt
+# or: yay -S --needed - < pkglist-aur.txt
 ```
 
-### Setup
-
+### 2. Restore Dotfiles (GNU Stow)
 ```bash
-# Clone this repository
-git clone https://github.com/yourusername/dotfiles.git ~/Dotfiles
-cd ~/Dotfiles
+# Clone repo
+git clone git@github.com:B0mml/dots.git ~/dots
+cd ~/dots
 
-# Install all configurations
-rm -drf .git
-stow */
-
-# Or install individual programs eg.
-stow fish # or
-stow nvim
+# Stow configurations
+stow fish ghostty nvim tmux doom scripts
 ```
 
-### Uninstall
-
+### 3. Restore Desktop Experience (KDE & Wallpaper)
 ```bash
-cd ~/Dotfiles
+# Install konsave
+paru -S konsave
 
-# Remove all symlinks
-stow -D */
-
-# Or remove individual programs
-stow -D fish
-stow -D nvim
-# etc.
+# Import & apply desktop profile (from ~/Sync or backup)
+konsave -i ~/Sync/my_desktop_theme.knsv  # or path to .knsv file
+konsave -a my_desktop_theme
 ```
 
-## Additional Requirements
+### 4. Post-Setup Notes
+- **Tmux plugins**: Open tmux and press `Prefix + I` to install plugins.
+- **Atuin**: Run `atuin login` to restore shell history.
+- **Wallpapers**: Copy `~/Pictures` or sync via Syncthing.
 
-<https://github.com/illiteratewriter/todoist-rs>
-<https://github.com/sachaos/todoist>
-<https://atuin.sh/>
-<https://github.com/MordechaiHadad/bob>
-<https://github.com/talwat/lowfi>
-<https://github.com/charmbracelet/gum>
-<https://github.com/tealdeer-rs/tealdeer>
-<https://github.com/joshmedeski/sesh>
-
-## Notes
-
-- After installing tmux config, press `Prefix + I` to install plugins
