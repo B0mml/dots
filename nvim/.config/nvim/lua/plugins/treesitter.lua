@@ -1,33 +1,53 @@
--- Treesitter configuration
 return {
   {
     'nvim-treesitter/nvim-treesitter',
+    branch = 'main',
     build = ':TSUpdate',
-    main = 'nvim-treesitter.configs',
-    dependencies = {
-      'nvim-treesitter/nvim-treesitter-textobjects',
-    },
-    opts = {
-      ensure_installed = { 
-        'bash', 'c', 'diff', 'html', 'lua', 'luadoc', 'markdown', 
-        'markdown_inline', 'query', 'vim', 'vimdoc' 
-      },
-      auto_install = true,
-      highlight = {
-        enable = true,
-        additional_vim_regex_highlighting = { 'ruby' },
-      },
-      indent = { enable = true, disable = { 'ruby' } },
-      textobjects = {
-        swap = {
-          enable = true,
-          swap_next = {
-            ['<C-A-l>'] = '@parameter.inner',
-          },
-          swap_previous = {
-            ['<C-A-h>'] = '@parameter.inner',
-          },
-        },
+    lazy = false,
+    config = function()
+      -- Enable built-in treesitter highlighting & indentation via autocmd
+      vim.api.nvim_create_autocmd('FileType', {
+        callback = function(args)
+          pcall(vim.treesitter.start)
+
+          if vim.bo[args.buf].filetype ~= 'ruby' then vim.bo[args.buf].indentexpr = "v:lua.require'nvim-treesitter'.indentexpr()" end
+        end,
+      })
+
+      -- Install missing parsers safely
+      local ensure_installed = {
+        'bash',
+        'c',
+        'diff',
+        'html',
+        'lua',
+        'luadoc',
+        'markdown',
+        'markdown_inline',
+        'query',
+        'vim',
+        'vimdoc',
+      }
+
+      local ok, ts_config = pcall(require, 'nvim-treesitter.config')
+      if ok then
+        local installed = ts_config.get_installed()
+        local to_install = vim.tbl_filter(function(p) return not vim.tbl_contains(installed, p) end, ensure_installed)
+
+        if #to_install > 0 then require('nvim-treesitter').install(to_install) end
+      end
+    end,
+  },
+
+  {
+    'nvim-treesitter/nvim-treesitter-textobjects',
+    branch = 'main',
+    dependencies = { 'nvim-treesitter/nvim-treesitter' },
+    config = function()
+      local ok, textobjects = pcall(require, 'nvim-treesitter-textobjects')
+      if not ok then return end
+
+      textobjects.setup {
         select = {
           enable = true,
           lookahead = true,
@@ -40,6 +60,15 @@ return {
             ['ia'] = '@parameter.inner',
             ['ab'] = '@block.outer',
             ['ib'] = '@block.inner',
+          },
+        },
+        swap = {
+          enable = true,
+          swap_next = {
+            ['<C-A-l>'] = '@parameter.inner',
+          },
+          swap_previous = {
+            ['<C-A-h>'] = '@parameter.inner',
           },
         },
         move = {
@@ -66,7 +95,7 @@ return {
             ['[A'] = '@parameter.inner',
           },
         },
-      },
-    },
+      }
+    end,
   },
 }

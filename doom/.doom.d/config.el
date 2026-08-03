@@ -27,8 +27,9 @@
       doom-big-font (font-spec :family "Maple Mono NF" :size 26 :weight 'semi-bold)
       doom-symbol-font (font-spec :family "Noto Color Emoji" ))
 
-(setq doom-theme 'doom-palenight)
+;; (setq doom-theme 'doom-palenight)
 ;; (setq doom-theme 'doom-moonlight)
+(setq doom-theme 'doom-horizon)
 
 (setq display-line-numbers-type 'relative)
 
