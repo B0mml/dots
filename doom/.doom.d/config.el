@@ -89,6 +89,18 @@
 ;;           (lambda ()
 ;;             (setq-local flymake-diagnostic-functions '(eglot-flymake-backend))))
 
+(after! flycheck
+  (add-hook 'flycheck-mode-hook #'flycheck-annotate-mode)
+
+  ;; Annotation layout:
+  ;; Available styles: 'eol (end of line), 'below (underneath line), 'sideline (right edge), or nil
+  (setq flycheck-annotate-current-line-style 'eol
+        flycheck-annotate-other-lines-style 'eol)
+
+  ;; Optional: Enable VS Code Error Lens-style full-line background tinting
+  (setq flycheck-annotate-background t))
+
+
 ;;
 ;;; Org-Mode
 
