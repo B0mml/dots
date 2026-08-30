@@ -82,6 +82,12 @@
         ispell-local-dictionary-alist
         '(("de_DE,en_US" "[[:alpha:]]" "[^[:alpha:]]" "[']" nil ("-d" "de_DE,en_US") nil utf-8))))
 
+;; (after! flymake
+;;   (setq flymake-show-diagnostics-at-end-of-line 'short))
+
+;; (add-hook 'odin-mode-hook
+;;           (lambda ()
+;;             (setq-local flymake-diagnostic-functions '(eglot-flymake-backend))))
 
 ;;
 ;;; Org-Mode
@@ -149,3 +155,9 @@
              (visit? (car rest)))
         (funcall fn (list t group module) visit?))
     (funcall fn key visit-dir?)))
+
+(after! eldoc
+  ;; Zeigt nur die wichtigste / erste Dokumentationszeile an
+  (setq eldoc-documentation-strategy #'eldoc-documentation-default)
+  ;; Verhindert mehrzeiliges Aufblähen der Echo-Area
+  (setq eldoc-echo-area-use-multiline-p nil))
