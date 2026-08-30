@@ -1,0 +1,129 @@
+return {
+  -- Detect tabstop and shiftwidth automatically
+  'NMAC427/guess-indent.nvim',
+
+  -- Git related signs to the gutter, as well as utilities for managing changes
+  {
+    'lewis6991/gitsigns.nvim',
+    opts = {
+      signs = {
+        add = { text = '+' },
+        change = { text = '~' },
+        delete = { text = '_' },
+        topdelete = { text = '‾' },
+        changedelete = { text = '~' },
+      },
+      on_attach = function(bufnr)
+        local gitsigns = require 'gitsigns'
+
+        local function map(mode, l, r, opts)
+          opts = opts or {}
+          opts.buffer = bufnr
+          vim.keymap.set(mode, l, r, opts)
+        end
+
+        -- Navigation
+        map('n', ']g', function()
+          if vim.wo.diff then
+            vim.cmd.normal { ']g', bang = true }
+          else
+            gitsigns.nav_hunk 'next'
+          end
+        end, { desc = 'Jump to next git change' })
+
+        map('n', '[g', function()
+          if vim.wo.diff then
+            vim.cmd.normal { '[g', bang = true }
+          else
+            gitsigns.nav_hunk 'prev'
+          end
+        end, { desc = 'Jump to previous git change' })
+
+        -- Actions
+        -- visual mode
+        map('v', '<leader>hs', function() gitsigns.stage_hunk { vim.fn.line '.', vim.fn.line 'v' } end, { desc = 'git stage hunk' })
+        map('v', '<leader>hr', function() gitsigns.reset_hunk { vim.fn.line '.', vim.fn.line 'v' } end, { desc = 'git reset hunk' })
+        -- normal mode
+        map('n', '<leader>hs', gitsigns.stage_hunk, { desc = 'git stage hunk' })
+        map('n', '<leader>hr', gitsigns.reset_hunk, { desc = 'git reset hunk' })
+        map('n', '<leader>hS', gitsigns.stage_buffer, { desc = 'git Stage buffer' })
+        map('n', '<leader>hu', gitsigns.stage_hunk, { desc = 'git undo stage hunk' })
+        map('n', '<leader>hR', gitsigns.reset_buffer, { desc = 'git Reset buffer' })
+        map('n', '<leader>hp', gitsigns.preview_hunk, { desc = 'git preview hunk' })
+        map('n', '<leader>hb', gitsigns.blame_line, { desc = 'git blame line' })
+        map('n', '<leader>hd', gitsigns.diffthis, { desc = 'git diff against index' })
+        map('n', '<leader>hD', function() gitsigns.diffthis '@' end, { desc = 'git Diff against last commit' })
+        -- Toggles under User Interface
+        -- map('n', '<leader>uB', gitsigns.toggle_current_line_blame, { desc = 'Toggle git show blame line' })
+        -- map('n', '<leader>uD', gitsigns.preview_hunk_inline, { desc = 'Toggle git show Deleted' })
+      end,
+    },
+  },
+
+  -- Useful plugin to show you pending keybinds
+  {
+    'folke/which-key.nvim',
+    event = 'VimEnter',
+    opts = {
+      preset = 'helix',
+      delay = 200,
+      icons = {
+        mappings = vim.g.have_nerd_font,
+        keys = vim.g.have_nerd_font and {} or {
+          Up = '<Up> ',
+          Down = '<Down> ',
+          Left = '<Left> ',
+          Right = '<Right> ',
+          C = '<C-…> ',
+          M = '<M-…> ',
+          D = '<D-…> ',
+          S = '<S-…> ',
+          CR = '<CR> ',
+          Esc = '<Esc> ',
+          ScrollWheelDown = '<ScrollWheelDown> ',
+          ScrollWheelUp = '<ScrollWheelUp> ',
+          NL = '<NL> ',
+          BS = '<BS> ',
+          Space = '<Space> ',
+          Tab = '<Tab> ',
+          F1 = '<F1>',
+          F2 = '<F2>',
+          F3 = '<F3>',
+          F4 = '<F4>',
+          F5 = '<F5>',
+          F6 = '<F6>',
+          F7 = '<F7>',
+          F8 = '<F8>',
+          F9 = '<F9>',
+          F10 = '<F10>',
+          F11 = '<F11>',
+          F12 = '<F12>',
+        },
+      },
+      spec = {
+        { '<leader>a', group = 'AI', mode = { 'n', 'v' }, icon = { icon = '🪄' } },
+        { '<leader>s', group = 'Search' },
+        { '<leader>f', group = 'Find' },
+        { '<leader>h', group = 'Git Hunk', mode = { 'n', 'v' } },
+        { '<leader>u', group = 'User Interface', icon = { icon = '󰏘' } },
+        { '<leader>v', group = 'LÖVE', icon = { icon = '󰥱' } },
+        { '<leader>g', group = 'Git' },
+        { '<leader>q', group = 'Quickfix' },
+        { '<leader>c', group = 'Code Actions' },
+        { '<leader>.', group = 'Scratch Buffer' },
+        { '<leader>d', group = 'Debug', icon = { icon = '' } },
+        { '<leader>t', group = 'Todos', icon = { icon = '✓' } },
+        { '<leader>b', group = 'buffer', icon = { icon = '' } },
+        { '<leader>p', group = 'Projects', icon = { icon = '󰉌' } },
+      },
+    },
+  },
+
+  -- Highlight todo, notes, etc in comments
+  {
+    'folke/todo-comments.nvim',
+    event = 'VimEnter',
+    dependencies = { 'nvim-lua/plenary.nvim' },
+    opts = { signs = false },
+  },
+}

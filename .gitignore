@@ -1,0 +1,20 @@
+# Fish runtime state
+fish/.config/fish/fish_variables
+
+# Tmux plugins
+tmux/.config/tmux/plugins/
+
+# Emacs & Doom runtime files, caches & bytecode
+*.eld
+*.elc
+*.bak
+bak_*
+auto-save-list/
+eln-cache/
+elpa/
+transient/
+tree-sitter/
+package-quickstart.el*
+recentf.eld
+projects.eld
+projectile-*.eld

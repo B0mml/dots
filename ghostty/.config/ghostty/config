@@ -1,0 +1,33 @@
+# Theme
+# Use one of Ghostty's built-in names: "TokyoNight", "TokyoNight Night", "TokyoNight Storm", "TokyoNight Moon"
+theme = TokyoNight
+
+# Font Configuration
+font-family = "Maple Mono NF"
+font-style = "SemiBold"
+font-size = 16
+
+# Mouse Behavior
+mouse-hide-while-typing = true
+
+# Window & Transparency
+background-opacity = 0.9
+background-blur-radius = 20
+
+# Shell & Integration
+shell-integration-features = true
+link-url = true
+confirm-close-surface = false
+copy-on-select = true
+
+# Keybinds (Unbind Alt+1..0 for tmux navigation)
+keybind = alt+1=unbind
+keybind = alt+2=unbind
+keybind = alt+3=unbind
+keybind = alt+4=unbind
+keybind = alt+5=unbind
+keybind = alt+6=unbind
+keybind = alt+7=unbind
+keybind = alt+8=unbind
+keybind = alt+9=unbind
+keybind = alt+0=unbind
