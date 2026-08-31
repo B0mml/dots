@@ -48,3 +48,9 @@
 ;; (unpin! pinned-package another-pinned-package)
 ;; ...Or *all* packages (NOT RECOMMENDED; will likely break things)
 ;; (unpin! t)
+
+(package! ember-theme
+  :recipe (:host github :repo "ember-theme/emacs" :local-repo "ember-theme"))
+
+(package! catppuccin-theme
+  :recipe (:host github :repo "catppuccin/emacs" :local-repo "catppuccin-theme"))

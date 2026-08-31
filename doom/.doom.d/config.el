@@ -3,15 +3,21 @@
 ;;
 ;;; UI & Core
 
+(when-let (path (locate-library "ember-theme"))
+  (add-to-list 'custom-theme-load-path (file-name-directory path)))
+
 (setq shell-file-name "/bin/zsh"
-      which-key-idle-delay 0.0
+      which-key-idle-delay 0.1
       fancy-splash-image "~/.doom.d/banners/doom.svg"
       display-line-numbers-type 'relative
       ;; doom-theme 'doom-bluloco-dark)
-      doom-theme 'doom-horizon)
+      ;; doom-theme 'doom-horizon)
+      doom-theme 'ember)
+;; catppuccin-flavor 'mocha
+;; doom-theme 'catppuccin)
 
-(setq doom-font (font-spec :family "Maple Mono NF" :size 24 :weight 'semi-bold)
-      doom-big-font (font-spec :family "Maple Mono NF" :size 26 :weight 'semi-bold)
+(setq doom-font (font-spec :family "Maple Mono NF" :size 22 :weight 'semi-bold)
+      doom-big-font (font-spec :family "Maple Mono NF" :size 24 :weight 'semi-bold)
       doom-symbol-font (font-spec :family "Noto Color Emoji"))
 
 
@@ -47,23 +53,6 @@
     (when pos
       (apply orig-fn pos args))))
 
-(after! lsp-completion
-  (defadvice! +lsp-completion-fix-doc-fallback-a (orig-fn item)
-    "Fix `lsp-completion--get-documentation' returning nil when detail is contained in doc."
-    :around #'lsp-completion--get-documentation
-    (let ((doc (funcall orig-fn item)))
-      (if (and doc (not (string-blank-p doc)))
-          doc
-        (when-let* ((lsp-item (get-text-property 0 'lsp-completion-item (lsp-completion--resolve item)))
-                    (raw-doc (or (lsp:completion-item-documentation? lsp-item)
-                                 (lsp:completion-item-detail? lsp-item))))
-          (let ((rendered (lsp--render-element raw-doc)))
-            (unless (string-blank-p rendered)
-              (put-text-property 0 (length item) 'lsp-completion-item-doc rendered item)
-              rendered)))))))
-
-
-
 
 ;;
 ;;; Consult & Navigation
@@ -82,24 +71,23 @@
         ispell-local-dictionary-alist
         '(("de_DE,en_US" "[[:alpha:]]" "[^[:alpha:]]" "[']" nil ("-d" "de_DE,en_US") nil utf-8))))
 
+
+;;
+;;; Syntax Diagnostics (Flymake + Eglot)
+
 ;; (after! flymake
+;;   ;; Inline diagnostics at end of line (Error Lens style)
 ;;   (setq flymake-show-diagnostics-at-end-of-line 'short))
+;; (after! flycheck
+;;   (add-hook 'flycheck-mode-hook #'flycheck-annotate-mode)
+;;   (setq flycheck-annotate-current-line-style 'sideline
+;;         flycheck-annotate-other-lines-style 'eol
+;;         flycheck-display-errors-function nil))
 
-;; (add-hook 'odin-mode-hook
-;;           (lambda ()
-;;             (setq-local flymake-diagnostic-functions '(eglot-flymake-backend))))
-
-(after! flycheck
-  (add-hook 'flycheck-mode-hook #'flycheck-annotate-mode)
-
-  ;; Annotation layout:
-  ;; Available styles: 'eol (end of line), 'below (underneath line), 'sideline (right edge), or nil
-  (setq flycheck-annotate-current-line-style 'eol
-        flycheck-annotate-other-lines-style 'eol)
-
-  ;; Optional: Enable VS Code Error Lens-style full-line background tinting
-  (setq flycheck-annotate-background t))
-
+;; (after! lsp-ui
+;;   ;; Disable LSP-UI's automatic hover popup and sideline duplicate diagnostics
+;;   (setq lsp-ui-doc-enable nil
+;;         lsp-ui-sideline-show-diagnostics nil))
 
 ;;
 ;;; Org-Mode
@@ -108,19 +96,17 @@
 
 (after! org
   (setq org-log-done 'time
-        org-agenda-files '("~/org/"))
+        org-agenda-files (directory-files-recursively "~/org/" "\\.org$")
+        auto-save-visited-interval 2)
+
+  ;; Auto-save visited org files
+  (add-hook 'org-mode-hook #'auto-save-visited-mode)
 
   (custom-set-faces!
     '(org-level-1 :height 1.4)
     '(org-level-2 :height 1.25)
     '(org-level-3 :height 1.15)
     '(org-level-4 :height 1.1))
-
-  ;; Auto-save visited org files
-  (defun my/org-auto-save ()
-    (setq-local auto-save-visited-interval 2)
-    (auto-save-visited-mode 1))
-  (add-hook 'org-mode-hook #'my/org-auto-save)
 
   ;; Capture Templates
   (setq org-capture-templates
@@ -154,9 +140,12 @@
         org-modern-block nil
         org-modern-horizontal-rule nil))
 
+(setq scroll-margin 5
+      scroll-conservatively 100     ; smooth 1-line scrolling without jump-recentering
+      maximum-scroll-margin 0.5)    ; prevents scroll-margin from breaking small splits
 
 ;;
-;;; Module Documentation Helper (Fix 'K' and 'gd' in init.el)
+;;; Documentation & Helpers
 
 (defadvice! +fix-doom-docs-module-args-a (fn key &optional visit-dir? &rest rest)
   "Allow `doom/docs-module` to accept legacy (GROUP MODULE &optional VISIT-DIR?) calls."
@@ -169,7 +158,27 @@
     (funcall fn key visit-dir?)))
 
 (after! eldoc
-  ;; Zeigt nur die wichtigste / erste Dokumentationszeile an
-  (setq eldoc-documentation-strategy #'eldoc-documentation-default)
-  ;; Verhindert mehrzeiliges Aufblähen der Echo-Area
-  (setq eldoc-echo-area-use-multiline-p nil))
+  ;; Display only primary/first documentation line in echo area
+  (setq eldoc-documentation-strategy #'eldoc-documentation-default
+        eldoc-echo-area-use-multiline-p nil))
+
+(after! flycheck (setq flycheck-idle-change-delay 0.1))
+(after! lsp-mode
+  (setq lsp-idle-delay 0.1)
+  :custom
+  (setq lsp-completion-enable-additional-text-edit t)
+  (setq lsp-modeline-code-actions-enable t)
+  )   
+
+(custom-set-faces!
+  '((flycheck-error flymake-error)
+    :underline (:style line :color "#ff6b6b")
+    :weight bold)
+
+  '((flycheck-warning flymake-warning)
+    :underline (:style line :color "#e5c07b")
+    :weight bold)
+
+  '((flycheck-info flymake-note)
+    :underline (:style line :color "#98be65")
+    ))

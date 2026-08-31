@@ -15,7 +15,7 @@
        ;;helm              ; the *other* search engine for love and life
        ;;ido               ; the other *other* search engine...
        ;;ivy               ; a search engine for love and life
-       (vertico +icons +childframe)    ; the search engine of the future
+       (vertico +icons)    ; the search engine of the future
 
        :ui
        ;;deft              ; notational velocity for Emacs
@@ -59,7 +59,7 @@
        word-wrap           ; soft wrapping with language-aware indent
 
        :emacs
-       (dired +icons +dirvish) ; modern file management with preview
+       (dired +icons) ; modern file management with preview
        electric            ; smarter, keyword-based electric-indent
        ;;eww               ; the internet is gross
        (ibuffer +icons)    ; interactive buffer management
@@ -86,12 +86,12 @@
        ;;debugger          ; FIXME stepping through code, to help you add bugs
        direnv
        docker
-       ;;editorconfig      ; let someone else argue about tabs vs spaces
+       editorconfig      ; let someone else argue about tabs vs spaces
        ;;ein               ; tame Jupyter notebooks with emacs
        (eval +overlay)     ; run code, run (also, repls)
        lookup              ; navigate your code and its documentation
        ;;llm               ; when I said you needed friends, I didn't mean...
-       (lsp +eglot)        ; lightweight and built-in LSP client
+       (lsp +peek)        ; lightweight and built-in LSP client
        magit               ; a git porcelain for Emacs
        ;;make              ; run make tasks from Emacs
        ;;pass              ; password manager for nerds
@@ -145,7 +145,7 @@
        ;;lean              ; for folks with too much to prove
        ;;ledger            ; be audit you can be
        (lua +lsp +tree-sitter) ; one-based indices? one-based indices
-       markdown            ; writing docs for people to ignore
+       (markdown +tree-sitter)            ; writing docs for people to ignore
        ;;nim               ; python + lisp at the speed of c
        ;;nix               ; I hereby declare "nix geht mehr!"
        ;;ocaml             ; an objective camel
