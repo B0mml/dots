@@ -6,7 +6,7 @@
 (when-let (path (locate-library "ember-theme"))
   (add-to-list 'custom-theme-load-path (file-name-directory path)))
 
-(setq shell-file-name "/bin/fish"
+(setq shell-file-name "/bin/zsh"
       which-key-idle-delay 0.1
       fancy-splash-image "~/.doom.d/banners/doom.svg"
       display-line-numbers-type 'relative
@@ -70,10 +70,25 @@
   (setq rustic-flycheck-setup-mode nil))
 
 (after! flycheck
+  (remove-hook 'flycheck-mode-hook #'+syntax-init-popups-h)
+
+  ;; Only check on save and file open
+  (setq flycheck-check-syntax-automatically '(save mode-enabled))
+
+  ;; Inline annotations style
   (add-hook 'flycheck-mode-hook #'flycheck-annotate-mode)
   (setq flycheck-annotate-current-line-style 'below
         flycheck-annotate-other-lines-style 'sideline)
-  (remove-hook 'flycheck-mode-hook #'+syntax-init-popups-h)
+
+  ;; Hide inline annotations while in Insert mode
+  (add-hook 'evil-insert-state-entry-hook #'flycheck-annotate--clear)
+  (add-hook 'evil-insert-state-exit-hook #'flycheck-annotate--refresh)
+  (defadvice! +flycheck-annotate--inhibit-in-insert-a (orig-fn &rest args)
+    "Don't render inline annotations while in insert/replace mode."
+    :around #'flycheck-annotate--refresh
+    (unless (and (bound-and-true-p evil-local-mode)
+                 (or (evil-insert-state-p) (evil-replace-state-p)))
+      (apply orig-fn args)))
 
   (custom-set-faces!
     '((flycheck-error flymake-error)
