@@ -150,7 +150,7 @@
        ;;nix               ; I hereby declare "nix geht mehr!"
        ;;ocaml             ; an objective camel
        (odin +lsp +tree-sitter) ; C, minus its footguns
-       (org +dragndrop +pretty +pandoc +roam) ; organize your plain life in plain text
+       (org +dragndrop +pretty +pandoc) ; organize your plain life in plain text
        ;;php               ; perl's insecure younger brother
        ;;plantuml          ; diagrams for confusing people more
        ;;graphviz          ; diagrams for confusing yourself even more

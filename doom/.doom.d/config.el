@@ -1,50 +1,41 @@
 ;;; $DOOMDIR/config.el -*- lexical-binding: t; -*-
 
 ;;
-;;; UI & Core
+;;; UI & Core Settings
 
 (when-let (path (locate-library "ember-theme"))
   (add-to-list 'custom-theme-load-path (file-name-directory path)))
 
-(setq shell-file-name "/bin/zsh"
+(setq shell-file-name "/bin/fish"
       which-key-idle-delay 0.1
       fancy-splash-image "~/.doom.d/banners/doom.svg"
       display-line-numbers-type 'relative
-      ;; doom-theme 'doom-bluloco-dark)
-      ;; doom-theme 'doom-horizon)
       doom-theme 'ember)
-;; catppuccin-flavor 'mocha
-;; doom-theme 'catppuccin)
 
 (setq doom-font (font-spec :family "Maple Mono NF" :size 22 :weight 'semi-bold)
       doom-big-font (font-spec :family "Maple Mono NF" :size 24 :weight 'semi-bold)
       doom-symbol-font (font-spec :family "Noto Color Emoji"))
 
+(setq scroll-margin 5
+      scroll-conservatively 100       ; Smooth 1-line scrolling without jump-recentering
+      maximum-scroll-margin 0.5       ; Prevents scroll-margin from breaking small splits
+      doom-modeline-modal nil)
+
 
 ;;
 ;;; Completion (Corfu)
 
-(setq +corfu-want-tab-prefer-expand-snippets t
-      +corfu-want-tab-prefer-navigating-snippets t
-      +corfu-want-ret-to-confirm t)
-
 (after! corfu
-  ;; Auto-completion popup triggers quickly as you type
-  (setq corfu-auto t
-        corfu-auto-delay 0.1
-        corfu-auto-prefix 1
-        corfu-preselect 'first)  ; Preselect 1st candidate so doc popup can trigger immediately
+  (setq corfu-auto nil                ; Manual completion on demand
+        corfu-preselect 'prompt)
 
-  ;; Enable documentation popup next to completion candidate
-  (require 'corfu-popupinfo)
   (corfu-popupinfo-mode 1)
   (setq corfu-popupinfo-delay '(0.2 . 0.1))
 
-  ;; Keybindings to toggle/view doc during completion
-  (define-key corfu-map (kbd "C-h") #'corfu-popupinfo-toggle)
-  (define-key corfu-map (kbd "M-h") #'corfu-popupinfo-documentation)
-  (define-key corfu-map (kbd "M-d") #'corfu-popupinfo-documentation)
-  (define-key corfu-map (kbd "M-g") #'corfu-popupinfo-location)
+  ;; Close completion popup and stay in Insert mode
+  (map! :map corfu-map
+        :i "C-e" #'corfu-quit
+        :i "C-g" #'corfu-quit)
 
   ;; Fix Emacs 31 popup positioning nil-check
   (defadvice! +corfu--candidates-popup-safe-a (orig-fn pos &rest args)
@@ -55,15 +46,11 @@
 
 
 ;;
-;;; Consult & Navigation
+;;; Navigation, Search & Spell Checking
 
 (after! consult
   (setq consult-imenu-config
         '((lua-mode :types ((?f "Function" font-lock-function-name-face))))))
-
-
-;;
-;;; Spell Checking (Hunspell DE/EN)
 
 (after! flyspell
   (setq ispell-program-name "hunspell"
@@ -73,34 +60,37 @@
 
 
 ;;
-;;; Syntax Diagnostics (Flymake + Eglot)
+;;; Diagnostics & Documentation
 
-;; (after! flymake
-;;   ;; Inline diagnostics at end of line (Error Lens style)
-;;   (setq flymake-show-diagnostics-at-end-of-line 'short))
-;; (after! flycheck
-;;   (add-hook 'flycheck-mode-hook #'flycheck-annotate-mode)
-;;   (setq flycheck-annotate-current-line-style 'sideline
-;;         flycheck-annotate-other-lines-style 'eol
-;;         flycheck-display-errors-function nil))
+(after! eldoc
+  (setq eldoc-documentation-strategy #'eldoc-documentation-default
+        eldoc-echo-area-use-multiline-p nil))
 
-;; (after! lsp-ui
-;;   ;; Disable LSP-UI's automatic hover popup and sideline duplicate diagnostics
-;;   (setq lsp-ui-doc-enable nil
-;;         lsp-ui-sideline-show-diagnostics nil))
+(after! flycheck
+  (add-hook 'flycheck-mode-hook #'flycheck-annotate-mode)
+  (setq flycheck-annotate-current-line-style nil
+        flycheck-annotate-other-lines-style 'sideline)
+
+  (custom-set-faces!
+    '((flycheck-error flymake-error)
+      :underline (:style line :color "#ff6b6b")
+      :weight bold)
+    '((flycheck-warning flymake-warning)
+      :underline (:style line :color "#e5c07b")
+      :weight bold)
+    '((flycheck-info flymake-note)
+      :underline (:style line :color "#98be65"))))
+
 
 ;;
-;;; Org-Mode
+;;; Org Mode & GTD Setup
 
 (setq org-directory "~/org/")
 
 (after! org
-  (setq org-log-done 'time
-        org-agenda-files (directory-files-recursively "~/org/" "\\.org$")
-        auto-save-visited-interval 2)
-
-  ;; Auto-save visited org files
-  (add-hook 'org-mode-hook #'auto-save-visited-mode)
+  (setq org-default-notes-file (expand-file-name "tasks.org" org-directory)
+        org-agenda-files (list (expand-file-name "tasks.org" org-directory))
+        org-log-done 'time)
 
   (custom-set-faces!
     '(org-level-1 :height 1.4)
@@ -108,22 +98,23 @@
     '(org-level-3 :height 1.15)
     '(org-level-4 :height 1.1))
 
-  ;; Capture Templates
+  ;; Capture templates: 'i' for agenda tasks, 'n' for atomic knowledge notes
+  (require 'denote)
   (setq org-capture-templates
-        '(("r" "Refile" entry
-           (file+headline "~/org/refile.org" "Inbox")
-           "* %?\n%U")
-          ("T" "TODO" entry
-           (file+headline "~/org/todo.org" "Inbox")
-           "* TODO %?\n  %i\n  %a")
-          ("m" "Meeting" entry
-           (file "~/org/refile.org")
-           "* Meeting [%<%Y-%m-%d %a>]\n** Work\n** Notes\n")
-          ("s" "Code Snippet" entry
-           (file+headline "~/org/snippets.org" "Snippets")
-           "** %^{Language}\n*** %^{Title}\nCaptured: %U\nSource: [[file://%F][%f]]\n\n#+BEGIN_SRC %\\1\n%i%?\n#+END_SRC\n\n"))))
+        '(("i" "Inbox Task" entry
+           (file+headline "~/org/tasks.org" "Inbox")
+           "* TODO %?\n  Captured: %U\n  %i"
+           :empty-lines 1)
 
-;; Only use org-modern for heading stars
+          ("n" "New Denote Note (Knowledge / Snippet)" plain
+           (file denote-last-path)
+           #'denote-org-capture
+           :no-save t
+           :immediate-finish nil
+           :kill-buffer t
+           :jump-to-captured t))))
+
+;; Minimal org-modern styling (heading stars only)
 (after! org-modern
   (setq org-modern-star 'replace
         org-modern-replace-stars "◉○✸✿"
@@ -140,12 +131,104 @@
         org-modern-block nil
         org-modern-horizontal-rule nil))
 
-(setq scroll-margin 5
-      scroll-conservatively 100     ; smooth 1-line scrolling without jump-recentering
-      maximum-scroll-margin 0.5)    ; prevents scroll-margin from breaking small splits
 
 ;;
-;;; Documentation & Helpers
+;;; Denote (Knowledge Management in ~/org/)
+
+(use-package! denote
+  :config
+  (setq denote-directory (expand-file-name "~/org/")
+        denote-file-type 'org
+        denote-known-keywords '("emacs" "dev" "rust" "lua" "gamedev" "uni" "ideas" "golang" "learning" "website"))
+
+  (add-hook 'dired-mode-hook #'denote-dired-mode)
+
+  (map! :leader
+        (:prefix-map ("n" . "notes")
+                     (:prefix ("d" . "denote")
+                      :desc "New note"              "n" #'denote
+                      :desc "Open / Create note"    "d" #'denote-open-or-create
+                      :desc "Find note"             "f" #'denote-open-or-create
+                      :desc "Insert link"           "l" #'denote-link-or-create
+                      :desc "Show backlinks"         "b" #'denote-backlinks
+                      :desc "Rename file"           "r" #'denote-rename-file
+                      :desc "Add keywords"          "k" #'denote-keywords-add
+                      :desc "Remove keywords"       "K" #'denote-keywords-remove))))
+
+
+;;
+;;; LSP & Inlay Hints
+
+(setq-default lsp-inlay-hint-enable nil)
+
+(add-hook! '(rustic-mode-hook
+             rust-mode-hook
+             rust-ts-mode-hook
+             go-mode-hook
+             go-ts-mode-hook)
+  (defun +lsp-enable-inlay-hints-locally-h ()
+    (setq-local lsp-inlay-hint-enable t)))
+
+(map! :leader
+      :desc "Inlay hints" "t h" #'lsp-inlay-hints-mode)
+
+(after! lsp-mode
+  (setq lsp-idle-delay 0.1
+        lsp-completion-enable-additional-text-edit t
+        lsp-modeline-code-actions-enable t
+        lsp-lens-enable nil
+        lsp-warn-no-matched-clients nil
+        lsp-enable-symbol-highlighting nil
+        lsp-enable-suggest-server-download nil))
+
+(after! lsp-ui
+  (setq lsp-ui-doc-enable nil))
+
+(after! lsp-rust
+  (setq lsp-rust-analyzer-hide-named-constructor t
+        lsp-rust-analyzer-hide-closure-initialization t
+        lsp-rust-analyzer-display-chaining-hints t
+        lsp-rust-analyzer-display-parameter-hints nil
+        lsp-rust-analyzer-display-reborrow-hints "never"
+        lsp-rust-analyzer-closure-return-type-hints "never"
+        lsp-rust-analyzer-display-lifetime-elision-hints-enable "skip_trivial"
+        lsp-rust-analyzer-max-inlay-hint-length 25
+        lsp-rust-analyzer-lens-enable nil
+        lsp-rust-analyzer-lens-run-enable nil
+        lsp-rust-analyzer-lens-debug-enable nil))
+
+(after! lsp-go
+  (lsp-register-custom-settings
+   '(("gopls.hints"
+      ((assignVariableTypes . t)
+       (compositeLiteralFields . t)
+       (compositeLiteralTypes . t)
+       (constantValues . t)
+       (functionTypeParameters . t)
+       (parameterNames . nil)
+       (rangeVariableTypes . t))))))
+
+(custom-set-faces!
+  '(lsp-inlay-hint-face :inherit font-lock-comment-face :italic t))
+
+
+;;
+;;; Evil & Navigation Improvements
+
+(setq evil-split-window-below t
+      evil-vsplit-window-right t
+      evil-ex-substitute-global t)
+
+(map! :o "o" #'evil-inner-symbol)
+
+(map! (:after evil-org
+       :map evil-org-mode-map
+       :n "gk" (cmds! (org-on-heading-p) #'org-backward-element #'evil-previous-visual-line)
+       :n "gj" (cmds! (org-on-heading-p) #'org-forward-element #'evil-next-visual-line)))
+
+
+;;
+;;; Fixes & Hacks
 
 (defadvice! +fix-doom-docs-module-args-a (fn key &optional visit-dir? &rest rest)
   "Allow `doom/docs-module` to accept legacy (GROUP MODULE &optional VISIT-DIR?) calls."
@@ -156,29 +239,3 @@
              (visit? (car rest)))
         (funcall fn (list t group module) visit?))
     (funcall fn key visit-dir?)))
-
-(after! eldoc
-  ;; Display only primary/first documentation line in echo area
-  (setq eldoc-documentation-strategy #'eldoc-documentation-default
-        eldoc-echo-area-use-multiline-p nil))
-
-(after! flycheck (setq flycheck-idle-change-delay 0.1))
-(after! lsp-mode
-  (setq lsp-idle-delay 0.1)
-  :custom
-  (setq lsp-completion-enable-additional-text-edit t)
-  (setq lsp-modeline-code-actions-enable t)
-  )   
-
-(custom-set-faces!
-  '((flycheck-error flymake-error)
-    :underline (:style line :color "#ff6b6b")
-    :weight bold)
-
-  '((flycheck-warning flymake-warning)
-    :underline (:style line :color "#e5c07b")
-    :weight bold)
-
-  '((flycheck-info flymake-note)
-    :underline (:style line :color "#98be65")
-    ))

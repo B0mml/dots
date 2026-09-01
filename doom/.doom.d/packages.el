@@ -54,3 +54,5 @@
 
 (package! catppuccin-theme
   :recipe (:host github :repo "catppuccin/emacs" :local-repo "catppuccin-theme"))
+
+(package! denote)
