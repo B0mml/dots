@@ -55,4 +55,8 @@
 (package! catppuccin-theme
   :recipe (:host github :repo "catppuccin/emacs" :local-repo "catppuccin-theme"))
 
-(package! denote)
+(package! denote
+  :recipe (:host github :repo "protesilaos/denote"))
+
+(package! indent-bars
+  :recipe (:host github :repo "jdtsmith/indent-bars"))

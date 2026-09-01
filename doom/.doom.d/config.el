@@ -66,10 +66,14 @@
   (setq eldoc-documentation-strategy #'eldoc-documentation-default
         eldoc-echo-area-use-multiline-p nil))
 
+(after! rustic
+  (setq rustic-flycheck-setup-mode nil))
+
 (after! flycheck
   (add-hook 'flycheck-mode-hook #'flycheck-annotate-mode)
-  (setq flycheck-annotate-current-line-style nil
+  (setq flycheck-annotate-current-line-style 'below
         flycheck-annotate-other-lines-style 'sideline)
+  (remove-hook 'flycheck-mode-hook #'+syntax-init-popups-h)
 
   (custom-set-faces!
     '((flycheck-error flymake-error)
@@ -99,7 +103,6 @@
     '(org-level-4 :height 1.1))
 
   ;; Capture templates: 'i' for agenda tasks, 'n' for atomic knowledge notes
-  (require 'denote)
   (setq org-capture-templates
         '(("i" "Inbox Task" entry
            (file+headline "~/org/tasks.org" "Inbox")
@@ -117,19 +120,7 @@
 ;; Minimal org-modern styling (heading stars only)
 (after! org-modern
   (setq org-modern-star 'replace
-        org-modern-replace-stars "◉○✸✿"
-        org-modern-table nil
-        org-modern-tag nil
-        org-modern-timestamp nil
-        org-modern-todo nil
-        org-modern-priority nil
-        org-modern-checkbox nil
-        org-modern-progress nil
-        org-modern-statistics nil
-        org-modern-keyword nil
-        org-modern-drawer nil
-        org-modern-block nil
-        org-modern-horizontal-rule nil))
+        org-modern-replace-stars "◉○✸✿"))
 
 
 ;;
@@ -150,7 +141,7 @@
                       :desc "Open / Create note"    "d" #'denote-open-or-create
                       :desc "Find note"             "f" #'denote-open-or-create
                       :desc "Insert link"           "l" #'denote-link-or-create
-                      :desc "Show backlinks"         "b" #'denote-backlinks
+                      :desc "Show backlinks"        "b" #'denote-backlinks
                       :desc "Rename file"           "r" #'denote-rename-file
                       :desc "Add keywords"          "k" #'denote-keywords-add
                       :desc "Remove keywords"       "K" #'denote-keywords-remove))))
@@ -182,20 +173,20 @@
         lsp-enable-suggest-server-download nil))
 
 (after! lsp-ui
-  (setq lsp-ui-doc-enable nil))
+  (setq lsp-ui-sideline-enable nil 
+        lsp-ui-doc-enable nil))
 
 (after! lsp-rust
-  (setq lsp-rust-analyzer-hide-named-constructor t
+  (setq lsp-rust-analyzer-cargo-all-targets nil
+        lsp-rust-analyzer-diagnostics-enable nil
+        lsp-rust-analyzer-hide-named-constructor t
         lsp-rust-analyzer-hide-closure-initialization t
         lsp-rust-analyzer-display-chaining-hints t
         lsp-rust-analyzer-display-parameter-hints nil
         lsp-rust-analyzer-display-reborrow-hints "never"
         lsp-rust-analyzer-closure-return-type-hints "never"
         lsp-rust-analyzer-display-lifetime-elision-hints-enable "skip_trivial"
-        lsp-rust-analyzer-max-inlay-hint-length 25
-        lsp-rust-analyzer-lens-enable nil
-        lsp-rust-analyzer-lens-run-enable nil
-        lsp-rust-analyzer-lens-debug-enable nil))
+        lsp-rust-analyzer-max-inlay-hint-length 25))
 
 (after! lsp-go
   (lsp-register-custom-settings
@@ -205,7 +196,7 @@
        (compositeLiteralTypes . t)
        (constantValues . t)
        (functionTypeParameters . t)
-       (parameterNames . nil)
+       (parameterNames . :json-false)
        (rangeVariableTypes . t))))))
 
 (custom-set-faces!
@@ -239,3 +230,25 @@
              (visit? (car rest)))
         (funcall fn (list t group module) visit?))
     (funcall fn key visit-dir?)))
+
+;;
+;;; Indent Bars
+
+(use-package! indent-bars
+  :hook (prog-mode . indent-bars-mode)
+  :config
+  (setq indent-bars-treesit-support t
+        indent-bars-no-descend-string t
+        indent-bars-width-frac 0.15     ; Bar width as fraction of char width (thin)
+        indent-bars-pad-frac 0.1        ; Offset within the column
+        indent-bars-color '(font-lock-comment-face :face-bg nil :blend 0.3)))
+
+
+;;
+;;; Magit
+(after! magit
+  (setq magit-inhibit-save-previous-winconf t  ; Avoids jarring window configuration jumps on quit
+        evil-collection-magit-want-horizontal-movement t
+        transient-values '((magit-rebase "--autosquash" "--autostash")
+                           (magit-pull "--rebase" "--autostash")
+                           (magit-revert "--autostash"))))
