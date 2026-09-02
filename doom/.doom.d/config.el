@@ -3,6 +3,9 @@
 ;;
 ;;; UI & Core Settings
 
+(add-to-list 'custom-theme-load-path (concat doom-user-dir "themes/"))
+
+;; Set the active theme
 (when-let (path (locate-library "ember-theme"))
   (add-to-list 'custom-theme-load-path (file-name-directory path)))
 
@@ -165,15 +168,7 @@
 ;;
 ;;; LSP & Inlay Hints
 
-(setq-default lsp-inlay-hint-enable nil)
-
-(add-hook! '(rustic-mode-hook
-             rust-mode-hook
-             rust-ts-mode-hook
-             go-mode-hook
-             go-ts-mode-hook)
-  (defun +lsp-enable-inlay-hints-locally-h ()
-    (setq-local lsp-inlay-hint-enable t)))
+(setq lsp-inlay-hint-enable nil)
 
 (map! :leader
       :desc "Inlay hints" "t h" #'lsp-inlay-hints-mode)
