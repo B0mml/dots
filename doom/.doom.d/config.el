@@ -140,6 +140,20 @@
   (setq org-modern-star 'replace
         org-modern-replace-stars "◉○✸✿"))
 
+;; Fix tree-sitter fontification across multiple Org source blocks
+(after! org-src
+  (defadvice! +org-src-fix-treesit-fontification-a (fn lang start end)
+    "Force tree-sitter parsers to re-initialize across multiple Org source blocks."
+    :around #'org-src-font-lock-fontify-block
+    (when-let* ((lang-mode (org-src-get-lang-mode-if-bound lang))
+                (buf (get-buffer (format " *org-src-fontification:%s*" lang-mode))))
+      (with-current-buffer buf
+        (when (fboundp 'treesit-parser-list)
+          (dolist (parser (treesit-parser-list))
+            (treesit-parser-delete parser)))
+        (setq major-mode 'fundamental-mode)))
+    (funcall fn lang start end)))
+
 
 ;;
 ;;; Denote (Knowledge Management in ~/org/)
@@ -262,3 +276,4 @@
         transient-values '((magit-rebase "--autosquash" "--autostash")
                            (magit-pull "--rebase" "--autostash")
                            (magit-revert "--autostash"))))
+
