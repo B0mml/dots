@@ -138,7 +138,19 @@
 ;; Minimal org-modern styling (heading stars only)
 (after! org-modern
   (setq org-modern-star 'replace
-        org-modern-replace-stars "◉○✸✿"))
+        org-modern-replace-stars "◉○✸✿"
+        org-modern-table nil
+        org-modern-tag nil
+        org-modern-timestamp nil
+        org-modern-todo nil
+        org-modern-priority nil
+        org-modern-checkbox nil
+        org-modern-progress nil
+        org-modern-statistics nil
+        org-modern-keyword nil
+        org-modern-drawer nil
+        org-modern-block nil
+        org-modern-horizontal-rule nil))
 
 ;; Fix tree-sitter fontification across multiple Org source blocks
 (after! org-src
@@ -162,7 +174,7 @@
   :config
   (setq denote-directory (expand-file-name "~/org/")
         denote-file-type 'org
-        denote-known-keywords '("emacs" "dev" "rust" "lua" "gamedev" "uni" "ideas" "golang" "learning" "website"))
+        denote-known-keywords '("emacs" "dev" "rust" "lua" "gamedev" "uni" "ideas" "golang" "learning" "website" "hardware" "homelab"))
 
   (add-hook 'dired-mode-hook #'denote-dired-mode)
 
