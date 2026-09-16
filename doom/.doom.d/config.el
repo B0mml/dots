@@ -15,8 +15,8 @@
       display-line-numbers-type 'relative
       doom-theme 'ember)
 
-(setq doom-font (font-spec :family "Maple Mono NF" :size 22 :weight 'semi-bold)
-      doom-big-font (font-spec :family "Maple Mono NF" :size 24 :weight 'semi-bold)
+(setq doom-font (font-spec :family "Maple Mono NF" :size 14.0 :weight 'semi-bold)
+      doom-big-font (font-spec :family "Maple Mono NF" :size 18.0 :weight 'semi-bold)
       doom-symbol-font (font-spec :family "Noto Color Emoji"))
 
 (setq scroll-margin 5
@@ -173,8 +173,20 @@
 (use-package! denote
   :config
   (setq denote-directory (expand-file-name "~/org/")
-        denote-file-type 'org
-        denote-known-keywords '("emacs" "dev" "rust" "lua" "gamedev" "uni" "ideas" "golang" "learning" "website" "hardware" "homelab"))
+        denote-file-type 'org)
+
+  (setq denote-known-keywords
+        (delete-dups
+         (append '("emacs" "dev" "rust" "lua" "gamedev" "uni" "ideas" "golang" "learning" "website" "hardware" "homelab" "c")
+                 (denote-keywords))))
+
+  ;; Keep the list synchronized whenever a new note or renamed file adds a keyword
+  (defun +denote-update-known-keywords (&rest _)
+    (setq denote-known-keywords
+          (delete-dups (append denote-known-keywords (denote-keywords)))))
+
+  (add-hook 'denote-after-rename-file-hook #'+denote-update-known-keywords)
+  (add-hook 'denote-after-new-note-hook #'+denote-update-known-keywords)
 
   (add-hook 'dired-mode-hook #'denote-dired-mode)
 
@@ -189,8 +201,6 @@
                       :desc "Rename file"           "r" #'denote-rename-file
                       :desc "Add keywords"          "k" #'denote-keywords-add
                       :desc "Remove keywords"       "K" #'denote-keywords-remove))))
-
-
 ;;
 ;;; LSP & Inlay Hints
 
@@ -201,6 +211,7 @@
 
 (after! lsp-mode
   (setq lsp-idle-delay 0.1
+        lsp-enable-file-watchers nil
         lsp-completion-enable-additional-text-edit t
         lsp-modeline-code-actions-enable t
         lsp-lens-enable nil
